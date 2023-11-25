@@ -1,2 +1,3 @@
 # LogiSync: Sustainable-Supply-Chain-Management-System
-is a software project that utilizes Object-Oriented Programming (OOP) principles, integrates with MySQL WorkBench for database management, and uses Python as the backend language. 
+is a comprehensive software project that leverages the principles of Object-Oriented Programming (OOP) and seamlessly integrates with database management, employing Python as its backend language. This innovative system is designed to address the complexities of supply chain management, with a particular focus on sustainability practices.
+
