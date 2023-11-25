@@ -25,8 +25,7 @@ def connection():
         host='localhost',
         user='root',
         password='',
-        db='supplychaindb',
-        port=3307,  # You can add the port here if needed, no need to add if its default
+        db='supplychaindb'
     )
     return conn
 
