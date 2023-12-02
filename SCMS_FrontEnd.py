@@ -980,39 +980,62 @@ def create_main_window(root, current_user):
             treeview.insert("", "end", values=row)
 
     def display_graph():
-        try:
-            product_data = SCMS_BackEnd.fetch_product_data()
+    try:
+        product_data = SCMS_BackEnd.fetch_product_data()
 
-            if not product_data:
-                Messagebox.show_warning("No data available for plotting.", "No Data", parent=inv_frame)
-                return False
-
-            product_names = [item[1] for item in product_data]
-            stock_values = [item[2] for item in product_data]
-
-            cmap = plt.get_cmap('viridis', len(product_names))
-
-            plt.bar(product_names, stock_values, color=[cmap(i) for i in range(len(product_names))])
-
-            plt.xlabel('Product Name')
-            plt.ylabel('Stock')
-            plt.title('Product Stock Levels')
-            plt.xticks(rotation=45, ha="right")
-            plt.tight_layout()
-
-            plt.show()
-
-            return True
-
-        except Exception as e:
-            print(f"Error: {e}")
-            Messagebox.show_error("Error occurred while plotting.", "Plotting Error", parent=inv_frame)
+        if not product_data:
+            Messagebox.show_warning("No data available for plotting.", "No Data", parent=inv_frame)
             return False
 
-        except Exception as e:
-            print(f"Error: {e}")
-            Messagebox.show_error("Error occurred while plotting.", "Plotting Error", parent=inv_frame)
-            return False
+        product_names = [item[1] for item in product_data]
+        stock_values = [item[2] for item in product_data]
+
+        cmap = plt.get_cmap('viridis', len(product_names))
+
+        plt.figure(figsize=(12, 6))
+
+        bars = plt.bar(product_names, stock_values, color=[cmap(i) for i in range(len(product_names))],
+                       edgecolor='black', linewidth=0.7)
+
+        plt.xlabel('Product Name')
+        plt.ylabel('Stock')
+        plt.title('Product Stock Levels')
+
+        plt.xticks(rotation=45, ha="right")
+
+        plt.grid(axis='y', linestyle='solid', alpha=0.2)
+
+        # calculate the quadratic regression line
+        x = np.arange(len(product_names))
+        coefficients = np.polyfit(x, stock_values, 2)
+        quadratic_trend = np.polyval(coefficients, x)
+
+        plt.plot(product_names, quadratic_trend, color='r', linestyle='--', label='Quadratic Trend')
+
+        max_stock = max(stock_values)
+        min_stock = min(stock_values)
+        plt.annotate(f'Max: {max_stock}', xy=(stock_values.index(max_stock), max_stock), xytext=(10, 0),
+                     textcoords='offset points', arrowprops=dict(arrowstyle="->"))
+        plt.annotate(f'Min: {min_stock}', xy=(stock_values.index(min_stock), min_stock), xytext=(10, 0),
+                     textcoords='offset points', arrowprops=dict(arrowstyle="->"))
+
+        mean_stock = np.mean(stock_values)
+        plt.axhline(y=mean_stock, color='b', linestyle='--', label=f'Mean: {mean_stock}', alpha=0.2)
+
+        plt.legend(['Quadratic Trend', 'Mean'], loc='lower left')
+
+        plt.gca().set_facecolor('#F5F5F5')
+
+        plt.tight_layout()
+        plt.show()
+
+        return True
+
+    except Exception as e:
+        print(f"Error: {e}")
+        Messagebox.show_error("Error occurred while plotting.", "Plotting Error", parent=inv_frame)
+        return False
+
 
     def update_status_bar():
         if current_user is not None:
